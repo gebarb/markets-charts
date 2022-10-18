@@ -1,4 +1,4 @@
-# Stock Charts 
+# Stocks Charts 
 
 ## React + TypeScript
 
