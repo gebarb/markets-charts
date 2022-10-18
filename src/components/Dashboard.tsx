@@ -9,7 +9,7 @@ import StockState from "../models/stocks";
 //const stocksUrl = "ws://stocks.mnet.website/";
 
 // https://eodhistoricaldata.com/financial-apis/new-real-time-data-api-websockets/
-const stocksUrl = "ws://ws.eodhistoricaldata.com/ws/us?api_token=demo";
+const stocksUrl = "wss://ws.eodhistoricaldata.com/ws/us?api_token=demo";
 
 class Dashboard extends React.Component<SpinnerProps, StockState> {
   connection!: WebSocket;
