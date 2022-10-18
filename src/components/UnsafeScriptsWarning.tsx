@@ -16,9 +16,6 @@ const UnsafeScriptsWarning = () => {
           <br /> Look for the &nbsp;<code>shield icon</code>&nbsp; on your
           browser's addreess bar. &#8679;
           <br />
-          <br />
-          (Trust me, it's just an app which shows some simulated share market
-          data :p)
         </div>
       </div>
     </div>
