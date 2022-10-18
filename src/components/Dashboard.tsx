@@ -6,10 +6,10 @@ import StocksLoaderStatus from "./StocksLoaderStatus";
 import SpinnerProps from "../models/spinnerProps";
 import StockState from "../models/stocks";
 
-// TODO: When deployed on HTTPS, need to use 'wss'
-// However, wss for this endpoint fails
 //const stocksUrl = "ws://stocks.mnet.website/";
-const stocksUrl = "wss://ws.eodhistoricaldata.com/ws/us?api_token=demo";
+
+// https://eodhistoricaldata.com/financial-apis/new-real-time-data-api-websockets/
+const stocksUrl = "ws://ws.eodhistoricaldata.com/ws/us?api_token=demo";
 
 class Dashboard extends React.Component<SpinnerProps, StockState> {
   connection!: WebSocket;
@@ -30,7 +30,7 @@ class Dashboard extends React.Component<SpinnerProps, StockState> {
           [
             JSON.stringify({
               action: "subscribe",
-              symbols: "AMZN, TSLA, MSFT",
+              symbols: "AAPL, AMZN, TSLA, MSFT",
             }),
           ],
           {
@@ -52,7 +52,7 @@ class Dashboard extends React.Component<SpinnerProps, StockState> {
         [
           JSON.stringify({
             action: "unsubscribe",
-            symbols: "AMZN, TSLA, MSFT",
+            symbols: "AAPL, AMZN, TSLA, MSFT",
           }),
         ],
         {
