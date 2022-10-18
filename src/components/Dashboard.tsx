@@ -6,7 +6,7 @@ import StocksLoaderStatus from "./StocksLoaderStatus";
 import SpinnerProps from "../models/spinnerProps";
 import StockState from "../models/stocks";
 
-const stocksUrl = "wss://stocks.mnet.website/";
+const stocksUrl = "ws://stocks.mnet.website/";
 
 class Dashboard extends React.Component<SpinnerProps, StockState> {
   connection: WebSocket | undefined;
