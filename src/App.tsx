@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import "./App.css";
 import Dashboard from "./components/Dashboard";
+import UnsafeScriptsWarning from "./components/UnsafeScriptsWarning";
 
 class App extends Component {
   state = {
@@ -24,6 +25,9 @@ class App extends Component {
   };
 
   render() {
+    if (this.state.hasError) {
+      return <UnsafeScriptsWarning />;
+    }
     return (
       <div className="App">
         <Dashboard
