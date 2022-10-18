@@ -6,10 +6,13 @@ import StocksLoaderStatus from "./StocksLoaderStatus";
 import SpinnerProps from "../models/spinnerProps";
 import StockState from "../models/stocks";
 
-const stocksUrl = "ws://stocks.mnet.website/";
+// TODO: When deployed on HTTPS, need to use 'wss'
+// However, wss for this endpoint fails
+//const stocksUrl = "ws://stocks.mnet.website/";
+const stocksUrl = "wss://ws.eodhistoricaldata.com/ws/us?api_token=demo";
 
 class Dashboard extends React.Component<SpinnerProps, StockState> {
-  connection: WebSocket | undefined;
+  connection!: WebSocket;
 
   state: StockState = {
     // stocks = {name: {current_value: 12, history: [{time: '2131', value: 45}, ...], is_selected: false}, ...}
@@ -20,10 +23,43 @@ class Dashboard extends React.Component<SpinnerProps, StockState> {
 
   componentDidMount = () => {
     this.connection = new WebSocket(stocksUrl);
+    // Create necessary Subscriptions
+    this.connection.onopen = () => {
+      this.connection.send(
+        new Blob(
+          [
+            JSON.stringify({
+              action: "subscribe",
+              symbols: "AMZN, TSLA, MSFT",
+            }),
+          ],
+          {
+            type: "application/json",
+          }
+        )
+      );
+    };
+    // TODO: Refactor to use REAL Data rather than SIMULATED
     this.connection.onmessage = this.saveNewStockValues;
     this.connection.onclose = () => {
       this.setState({ connectionError: true });
     };
+  };
+
+  componentWillUnmount = () => {
+    this.connection.send(
+      new Blob(
+        [
+          JSON.stringify({
+            action: "unsubscribe",
+            symbols: "AMZN, TSLA, MSFT",
+          }),
+        ],
+        {
+          type: "application/json",
+        }
+      )
+    );
   };
 
   saveNewStockValues = (event: { data: string }) => {
@@ -31,29 +67,51 @@ class Dashboard extends React.Component<SpinnerProps, StockState> {
     let result = JSON.parse(event.data);
     let [up_values_count, down_values_count] = [0, 0];
 
-    // time stored in histories should be consisitent across stocks(better for graphs)
+    // time stored in histories should be consistent across stocks(better for graphs)
     let current_time = Date.now();
     let new_stocks = this.state.stocks;
-    result.map((stock: any[]) => {
-      // stock = ['name', 'value']
-      if (this.state.stocks[stock[0]]) {
-        new_stocks[stock[0]].current_value > Number(stock[1])
+    // Logic for ws.eodhistoricaldata.com
+    if (result.s && result.p) {
+      if (this.state.stocks[result.s]) {
+        new_stocks[result.s].current_value > Number(result.p)
           ? up_values_count++
           : down_values_count++;
 
-        new_stocks[stock[0]].current_value = Number(stock[1]);
-        new_stocks[stock[0]].history.push({
+        new_stocks[result.s].current_value = Number(result.p);
+        new_stocks[result.s].history.push({
           time: current_time,
-          value: Number(stock[1]),
+          value: Number(result.p),
         });
       } else {
-        new_stocks[stock[0]] = {
-          current_value: stock[1],
-          history: [{ time: Date.now(), value: Number(stock[1]) }],
+        new_stocks[result.s] = {
+          current_value: result.p,
+          history: [{ time: Date.now(), value: Number(result.p) }],
           is_selected: false,
         };
       }
-    });
+    }
+    // Logic for stocks.mnet.website
+    //
+    // result.map((stock: any) => {
+    //   // stock = ['name', 'value']
+    //   if (this.state.stocks[stock[0]]) {
+    //     new_stocks[stock[0]].current_value > Number(stock[1])
+    //       ? up_values_count++
+    //       : down_values_count++;
+
+    //     new_stocks[stock[0]].current_value = Number(stock[1]);
+    //     new_stocks[stock[0]].history.push({
+    //       time: current_time,
+    //       value: Number(stock[1]),
+    //     });
+    //   } else {
+    //     new_stocks[stock[0]] = {
+    //       current_value: stock[1],
+    //       history: [{ time: Date.now(), value: Number(stock[1]) }],
+    //       is_selected: false,
+    //     };
+    //   }
+    // });
     this.setState({
       stocks: new_stocks,
       market_trend: this.newMarketTrend(up_values_count, down_values_count),

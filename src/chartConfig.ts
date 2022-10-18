@@ -23,9 +23,7 @@ export const chartJsConfig = {
     yAxes: [
       {
         ticks: {
-          beginAtZero: true,
-          stepValue: 10,
-          steps: 10,
+          beginAtZero: false,
         },
         scaleLabel: {
           display: true,

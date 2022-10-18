@@ -3,6 +3,7 @@ import { Line } from "react-chartjs-2";
 import * as zoom from "chartjs-plugin-zoom";
 import { chartJsConfig, chartColors, chartDataset } from "../chartConfig";
 
+// TODO: Refactor (and possibly use new Graphing Libraries) to Typescript-ify
 class StocksGraph extends React.Component {
   updateChart = () => {
     let chart = this.refs.chart.chartInstance;
