@@ -6,12 +6,14 @@ import StocksLoaderStatus from "./StocksLoaderStatus";
 import SpinnerProps from "../models/spinnerProps";
 import StockState from "../models/stocks";
 
+// Insecure WebSocket ONLY
 //const stocksUrl = "ws://stocks.mnet.website/";
 
 // https://eodhistoricaldata.com/financial-apis/new-real-time-data-api-websockets/
-const stocksUrl = "wss://ws.eodhistoricaldata.com/ws/us?api_token=demo";
-const forexUrl = "wss://ws.eodhistoricaldata.com/ws/forex?api_token=demo";
-//const cryptoUrl = "ws://ws.eodhistoricaldata.com/ws/crypto?api_token=demo";
+//const stocksUrl = "wss://ws.eodhistoricaldata.com/ws/us?api_token=demo";
+const stocksUrl = "wss://ws.finnhub.io?cd7vtviad3i5t4llsvlgcd7vtviad3i5t4llsvm0";
+const forexUrl = "wss://ws.eodhistoricaldata.com/ws/forex?api_token=634f5ab3cbad96.43714250";
+const cryptoUrl = "wss://ws.eodhistoricaldata.com/ws/crypto?api_token=634f5ab3cbad96.43714250";
 
 class Dashboard extends React.Component<SpinnerProps, StockState> {
   stocksConnection!: WebSocket;
@@ -32,7 +34,7 @@ class Dashboard extends React.Component<SpinnerProps, StockState> {
         new Blob(
           [
             JSON.stringify({
-              action: "subscribe",
+              type: "subscribe",
               symbols: "AAPL, AMZN, TSLA, MSFT",
             }),
           ],
@@ -54,7 +56,7 @@ class Dashboard extends React.Component<SpinnerProps, StockState> {
           [
             JSON.stringify({
               action: "subscribe",
-              symbols: "EURUSD",
+              symbols: "EURUSD, CADUSD",
             }),
           ],
           {
@@ -68,26 +70,26 @@ class Dashboard extends React.Component<SpinnerProps, StockState> {
       this.setState({ connectionError: true });
     };
 
-    // this.cryptoConnection = new WebSocket(cryptoUrl);
-    // this.cryptoConnection.onopen = () => {
-    //   this.cryptoConnection.send(
-    //     new Blob(
-    //       [
-    //         JSON.stringify({
-    //           action: "subscribe",
-    //           symbols: "ETH-USD, BTC-USD",
-    //         }),
-    //       ],
-    //       {
-    //         type: "application/json",
-    //       }
-    //     )
-    //   );
-    // };
-    // this.cryptoConnection.onmessage = this.saveNewStockValues;
-    // this.cryptoConnection.onclose = () => {
-    //   this.setState({ connectionError: true });
-    // };
+    this.cryptoConnection = new WebSocket(cryptoUrl);
+    this.cryptoConnection.onopen = () => {
+      this.cryptoConnection.send(
+        new Blob(
+          [
+            JSON.stringify({
+              action: "subscribe",
+              symbols: "ETH-USD, BTC-USD",
+            }),
+          ],
+          {
+            type: "application/json",
+          }
+        )
+      );
+    };
+    this.cryptoConnection.onmessage = this.saveNewStockValues;
+    this.cryptoConnection.onclose = () => {
+      this.setState({ connectionError: true });
+    };
   };
 
   componentWillUnmount = () => {
@@ -110,7 +112,7 @@ class Dashboard extends React.Component<SpinnerProps, StockState> {
         [
           JSON.stringify({
             action: "unsubscribe",
-            symbols: "EURUSD",
+            symbols: "EURUSD, CADUSD",
           }),
         ],
         {
@@ -119,19 +121,19 @@ class Dashboard extends React.Component<SpinnerProps, StockState> {
       )
     );
 
-    // this.cryptoConnection.send(
-    //   new Blob(
-    //     [
-    //       JSON.stringify({
-    //         action: "unsubscribe",
-    //         symbols: "ETH-USD, BTC-USD",
-    //       }),
-    //     ],
-    //     {
-    //       type: "application/json",
-    //     }
-    //   )
-    // );
+    this.cryptoConnection.send(
+      new Blob(
+        [
+          JSON.stringify({
+            action: "unsubscribe",
+            symbols: "ETH-USD, BTC-USD",
+          }),
+        ],
+        {
+          type: "application/json",
+        }
+      )
+    );
   };
 
   saveNewStockValues = (event: { data: string }) => {
@@ -139,7 +141,7 @@ class Dashboard extends React.Component<SpinnerProps, StockState> {
     let result = JSON.parse(event.data);
     let [up_values_count, down_values_count] = [0, 0];
 
-    // time stored in histories should be consistent across stocks(better for graphs)
+    // time stored in histories should be consistent across stocks
     let current_time = Date.now();
     let new_stocks = this.state.stocks;
     // Logic for ws.eodhistoricaldata.com
