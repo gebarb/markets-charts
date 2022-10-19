@@ -12,7 +12,8 @@ import StockState from "../models/stocks";
 // https://eodhistoricaldata.com/financial-apis/new-real-time-data-api-websockets/
 const stocksUrl = "wss://ws.eodhistoricaldata.com/ws/us?api_token=demo";
 const forexUrl = "wss://ws.eodhistoricaldata.com/ws/forex?api_token=demo";
-//const cryptoUrl = "wss://ws.eodhistoricaldata.com/ws/crypto?api_token=demo";
+// https://docs.cloud.coinbase.com/exchange/docs/websocket-overview
+const cryptoUrl = "wss://ws-feed.pro.coinbase.com";
 
 class Dashboard extends React.Component<SpinnerProps, StockState> {
   stocksConnection!: WebSocket;
@@ -69,26 +70,33 @@ class Dashboard extends React.Component<SpinnerProps, StockState> {
       this.setState({ connectionError: true });
     };
 
-    // this.cryptoConnection = new WebSocket(cryptoUrl);
-    // this.cryptoConnection.onopen = () => {
-    //   this.cryptoConnection.send(
-    //     new Blob(
-    //       [
-    //         JSON.stringify({
-    //           action: "subscribe",
-    //           symbols: "ETH-USD, BTC-USD",
-    //         }),
-    //       ],
-    //       {
-    //         type: "application/json",
-    //       }
-    //     )
-    //   );
-    // };
-    // this.cryptoConnection.onmessage = this.saveNewStockValues;
-    // this.cryptoConnection.onclose = () => {
-    //   this.setState({ connectionError: true });
-    // };
+    this.cryptoConnection = new WebSocket(cryptoUrl);
+    this.cryptoConnection.onopen = () => {
+      this.cryptoConnection.send(
+        new Blob(
+          [
+            JSON.stringify({
+              type: "subscribe",
+              product_ids: ["ETH-USD", "BTC-USD"],
+              channels: [
+                "heartbeat",
+                {
+                  name: "ticker",
+                  product_ids: ["ETH-USD", "BTC-USD"],
+                },
+              ],
+            }),
+          ],
+          {
+            type: "application/json",
+          }
+        )
+      );
+    };
+    this.cryptoConnection.onmessage = this.saveNewStockValues;
+    this.cryptoConnection.onclose = () => {
+      this.setState({ connectionError: true });
+    };
   };
 
   componentWillUnmount = () => {
@@ -120,19 +128,26 @@ class Dashboard extends React.Component<SpinnerProps, StockState> {
       )
     );
 
-    // this.cryptoConnection.send(
-    //   new Blob(
-    //     [
-    //       JSON.stringify({
-    //         action: "unsubscribe",
-    //         symbols: "ETH-USD, BTC-USD",
-    //       }),
-    //     ],
-    //     {
-    //       type: "application/json",
-    //     }
-    //   )
-    // );
+    this.cryptoConnection.send(
+      new Blob(
+        [
+          JSON.stringify({
+            type: "unsubscribe",
+            product_ids: ["ETH-USD", "BTC-USD"],
+            channels: [
+              "heartbeat",
+              {
+                name: "ticker",
+                product_ids: ["ETH-USD", "BTC-USD"],
+              },
+            ],
+          }),
+        ],
+        {
+          type: "application/json",
+        }
+      )
+    );
   };
 
   saveNewStockValues = (event: { data: string }) => {
@@ -144,8 +159,12 @@ class Dashboard extends React.Component<SpinnerProps, StockState> {
     let current_time = Date.now();
     let new_stocks = this.state.stocks;
     // Logic for ws.eodhistoricaldata.com
-    const ticker: string = result.s;
-    const val: number = result.p ? result.p : result.a;
+    const ticker: string = result.s ? result.s : result.product_id;
+    const val: number = result.p
+      ? result.p
+      : result.a
+      ? result.a
+      : parseFloat(result.price);
     if (ticker && val) {
       if (this.state.stocks[ticker]) {
         new_stocks[ticker].current_value > Number(val)

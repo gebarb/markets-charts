@@ -19,7 +19,7 @@ const StocksList = (props: {
     <div className="card column is-one-third" id="stocks_list">
       <div className="card-header">
         <div className="card-header-title">
-          Stocks &nbsp;
+          Markets &nbsp;
           <Detector
             render={({ online }: { online: any }) => (
               <span className={online ? "tag is-success" : "tag is-danger"}>
@@ -36,7 +36,7 @@ const StocksList = (props: {
       <div className="card-content">
         {props.areStocksLoaded() ? (
           <p className="is-size-7 has-text-info">
-            Click on a stock to select/unselect
+            Click on an item to add/remove to graph
           </p>
         ) : null}
         <table className="table is-bordered">
@@ -65,7 +65,7 @@ const StocksList = (props: {
             })}
             {props.areStocksLoaded() ? null : (
               <tr>
-                <td colSpan={4}>No stocks loaded yet!</td>
+                <td colSpan={4}>No markets loaded yet!</td>
               </tr>
             )}
           </tbody>
