@@ -10,10 +10,9 @@ import StockState from "../models/stocks";
 //const stocksUrl = "ws://stocks.mnet.website/";
 
 // https://eodhistoricaldata.com/financial-apis/new-real-time-data-api-websockets/
-//const stocksUrl = "wss://ws.eodhistoricaldata.com/ws/us?api_token=demo";
-const stocksUrl = "wss://ws.finnhub.io?cd7vtviad3i5t4llsvlgcd7vtviad3i5t4llsvm0";
-const forexUrl = "wss://ws.eodhistoricaldata.com/ws/forex?api_token=634f5ab3cbad96.43714250";
-const cryptoUrl = "wss://ws.eodhistoricaldata.com/ws/crypto?api_token=634f5ab3cbad96.43714250";
+const stocksUrl = "wss://ws.eodhistoricaldata.com/ws/us?api_token=demo";
+const forexUrl = "wss://ws.eodhistoricaldata.com/ws/forex?api_token=demo";
+//const cryptoUrl = "wss://ws.eodhistoricaldata.com/ws/crypto?api_token=demo";
 
 class Dashboard extends React.Component<SpinnerProps, StockState> {
   stocksConnection!: WebSocket;
@@ -34,7 +33,7 @@ class Dashboard extends React.Component<SpinnerProps, StockState> {
         new Blob(
           [
             JSON.stringify({
-              type: "subscribe",
+              action: "subscribe",
               symbols: "AAPL, AMZN, TSLA, MSFT",
             }),
           ],
@@ -56,7 +55,7 @@ class Dashboard extends React.Component<SpinnerProps, StockState> {
           [
             JSON.stringify({
               action: "subscribe",
-              symbols: "EURUSD, CADUSD",
+              symbols: "EURUSD",
             }),
           ],
           {
@@ -70,26 +69,26 @@ class Dashboard extends React.Component<SpinnerProps, StockState> {
       this.setState({ connectionError: true });
     };
 
-    this.cryptoConnection = new WebSocket(cryptoUrl);
-    this.cryptoConnection.onopen = () => {
-      this.cryptoConnection.send(
-        new Blob(
-          [
-            JSON.stringify({
-              action: "subscribe",
-              symbols: "ETH-USD, BTC-USD",
-            }),
-          ],
-          {
-            type: "application/json",
-          }
-        )
-      );
-    };
-    this.cryptoConnection.onmessage = this.saveNewStockValues;
-    this.cryptoConnection.onclose = () => {
-      this.setState({ connectionError: true });
-    };
+    // this.cryptoConnection = new WebSocket(cryptoUrl);
+    // this.cryptoConnection.onopen = () => {
+    //   this.cryptoConnection.send(
+    //     new Blob(
+    //       [
+    //         JSON.stringify({
+    //           action: "subscribe",
+    //           symbols: "ETH-USD, BTC-USD",
+    //         }),
+    //       ],
+    //       {
+    //         type: "application/json",
+    //       }
+    //     )
+    //   );
+    // };
+    // this.cryptoConnection.onmessage = this.saveNewStockValues;
+    // this.cryptoConnection.onclose = () => {
+    //   this.setState({ connectionError: true });
+    // };
   };
 
   componentWillUnmount = () => {
@@ -112,7 +111,7 @@ class Dashboard extends React.Component<SpinnerProps, StockState> {
         [
           JSON.stringify({
             action: "unsubscribe",
-            symbols: "EURUSD, CADUSD",
+            symbols: "EURUSD",
           }),
         ],
         {
@@ -121,19 +120,19 @@ class Dashboard extends React.Component<SpinnerProps, StockState> {
       )
     );
 
-    this.cryptoConnection.send(
-      new Blob(
-        [
-          JSON.stringify({
-            action: "unsubscribe",
-            symbols: "ETH-USD, BTC-USD",
-          }),
-        ],
-        {
-          type: "application/json",
-        }
-      )
-    );
+    // this.cryptoConnection.send(
+    //   new Blob(
+    //     [
+    //       JSON.stringify({
+    //         action: "unsubscribe",
+    //         symbols: "ETH-USD, BTC-USD",
+    //       }),
+    //     ],
+    //     {
+    //       type: "application/json",
+    //     }
+    //   )
+    // );
   };
 
   saveNewStockValues = (event: { data: string }) => {
