@@ -43,7 +43,7 @@ export const chartJsConfig = {
   },
 };
 
-// keep enough colors (should be as many as the number of stocks recieved)
+// keep enough colors (should be as many as the number of items recieved)
 // adding these manually to make sure the colors actually look good
 export const chartColors = [
   "rgb(244, 67, 54)",
@@ -70,9 +70,9 @@ export const chartColors = [
   "rgb(84, 58, 68)",
 ];
 
-export const chartDataset = (stock_name: string, color: string, stock_values: any) => {
+export const chartDataset = (item_name: string, color: string, item_values: any) => {
   return {
-    label: stock_name.toUpperCase(),
+    label: item_name.toUpperCase(),
     fill: false,
     lineTension: 0,
     backgroundColor: color,
@@ -88,6 +88,6 @@ export const chartDataset = (stock_name: string, color: string, stock_values: an
     pointHoverBorderWidth: 2,
     pointRadius: 3,
     pointHitRadius: 10,
-    data: stock_values,
+    data: item_values,
   };
 };

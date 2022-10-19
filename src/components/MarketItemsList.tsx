@@ -1,14 +1,14 @@
 import React from "react";
 import { Detector } from "react-detect-offline";
-import StockRow from "./StockRow";
+import MarketItemRow from "./MarketItemRow";
 import MarketTrendArrow from "./MarketTrendArrow";
 
-const StocksList = (props: {
+const MarketItemsList = (props: {
   resetData: React.MouseEventHandler<HTMLButtonElement> | undefined;
-  areStocksLoaded: () => any;
+  areMarketsLoaded: () => any;
   market_trend: string | undefined;
-  stocks: any;
-  toggleStockSelection: {
+  quotes: any;
+  toggleItemSelection: {
     bind: (
       arg0: undefined,
       arg1: any
@@ -16,7 +16,7 @@ const StocksList = (props: {
   };
 }) => {
   return (
-    <div className="card column is-one-third" id="stocks_list">
+    <div className="card column is-one-third" id="items_list">
       <div className="card-header">
         <div className="card-header-title">
           Markets &nbsp;
@@ -34,9 +34,9 @@ const StocksList = (props: {
         </div>
       </div>
       <div className="card-content">
-        {props.areStocksLoaded() ? (
+        {props.areMarketsLoaded() ? (
           <p className="is-size-7 has-text-info">
-            Click on an item to add/remove to graph
+            Click on an item to add/remove from graph
           </p>
         ) : null}
         <table className="table is-bordered">
@@ -52,18 +52,18 @@ const StocksList = (props: {
             </tr>
           </thead>
           <tbody>
-            {Object.keys(props.stocks).map((stock_name, index) => {
-              let current_stock = props.stocks[stock_name];
+            {Object.keys(props.quotes).map((item_name, index) => {
+              let current_item = props.quotes[item_name];
               return (
-                <StockRow
+                <MarketItemRow
                   key={index}
-                  stock_name={stock_name}
-                  stock_data={current_stock}
-                  toggleStockSelection={props.toggleStockSelection}
+                  item_name={item_name}
+                  item_data={current_item}
+                  toggleItemSelection={props.toggleItemSelection}
                 />
               );
             })}
-            {props.areStocksLoaded() ? null : (
+            {props.areMarketsLoaded() ? null : (
               <tr>
                 <td colSpan={4}>No markets loaded yet!</td>
               </tr>
@@ -75,4 +75,4 @@ const StocksList = (props: {
   );
 };
 
-export default StocksList;
+export default MarketItemsList;

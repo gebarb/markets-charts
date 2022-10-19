@@ -13,11 +13,11 @@
   color: white !important;
 }
 
-#stocks_list .card-content {
+#items_list .card-content {
   padding-left: 0px;
   padding-right: 0px;
 }
-#stocks_list table {
+#items_list table {
   width: 100%;
   margin: 3px;
 }

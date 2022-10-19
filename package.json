@@ -1,6 +1,6 @@
 {
-  "name": "markets",
-  "version": "0.1.0",
+  "name": "markets-charts",
+  "version": "1.0.0",
   "private": true,
   "homepage": "./",
   "dependencies": {

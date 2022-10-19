@@ -2,7 +2,7 @@ import React from "react";
 
 const UnsafeScriptsWarning = () => {
   return (
-    <div className="container stocks-loader">
+    <div className="container markets-loader">
       <div className="card-header">
         <div className="card-header-icon">
           <span className="loader" />

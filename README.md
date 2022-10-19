@@ -1,4 +1,4 @@
-# Markets Charts 
+# Markets Charts
 
 ## React + TypeScript
 
@@ -10,4 +10,5 @@
 1. Build a deployable package with the `npm run build` command
 
 #### Demo
-https://stocks.graysonebarb.com/
+
+https://markets.graysonebarb.com/

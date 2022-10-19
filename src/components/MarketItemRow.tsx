@@ -2,39 +2,39 @@ import React from "react";
 import { Sparklines, SparklinesLine } from "react-sparklines";
 import TimeAgo from "react-timeago";
 
-const StockRow = (props: {
-  stock_data: { history: any; is_selected?: any; current_value: number };
-  stock_name: string | undefined;
-  toggleStockSelection: {
+const MarketItemRow = (props: {
+  item_data: { history: any; is_selected?: any; current_value: number };
+  item_name: string | undefined;
+  toggleItemSelection: {
     bind: (
       arg0: undefined,
       arg1: any
     ) => React.MouseEventHandler<HTMLTableRowElement> | undefined;
   };
 }) => {
-  const getStockValueColor = (stock: {
+  const getQuoteValueColor = (quote: {
     current_value: number;
     history: { value: number }[];
   }) => {
-    if (stock.current_value < stock.history.slice(-2)[0].value) {
+    if (quote.current_value < quote.history.slice(-2)[0].value) {
       return "red";
-    } else if (stock.current_value > stock.history.slice(-2)[0].value) {
+    } else if (quote.current_value > quote.history.slice(-2)[0].value) {
       return "green";
     } else {
       return undefined;
     }
   };
 
-  let history = props.stock_data.history;
+  let history = props.item_data.history;
   return (
     <tr
-      className={props.stock_data.is_selected ? "selected" : undefined}
-      id={props.stock_name}
-      onClick={props.toggleStockSelection.bind(this, props.stock_name)}
+      className={props.item_data.is_selected ? "selected" : undefined}
+      id={props.item_name}
+      onClick={props.toggleItemSelection.bind(this, props.item_name)}
     >
-      <td>{props.stock_name ? props.stock_name.toUpperCase() : ""}</td>
-      <td className={getStockValueColor(props.stock_data)}>
-        {props.stock_data.current_value.toFixed(2)}
+      <td>{props.item_name ? props.item_name.toUpperCase() : ""}</td>
+      <td className={getQuoteValueColor(props.item_data)}>
+        {props.item_data.current_value.toFixed(2)}
       </td>
       <td>
         <Sparklines
@@ -52,4 +52,4 @@ const StockRow = (props: {
   );
 };
 
-export default StockRow;
+export default MarketItemRow;

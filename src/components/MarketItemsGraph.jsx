@@ -4,34 +4,34 @@ import * as zoom from "chartjs-plugin-zoom";
 import { chartJsConfig, chartColors, chartDataset } from "../chartConfig";
 
 // TODO: Refactor (and possibly use new Graphing Libraries) to Typescript-ify
-class StocksGraph extends React.Component {
+class MarketItemsGraph extends React.Component {
   updateChart = () => {
     let chart = this.refs.chart.chartInstance;
 
-    if (Object.keys(this.props.stocks).length === 0) {
+    if (Object.keys(this.props.quotes).length === 0) {
       chart.data.datasets = [];
       return chart.update();
     }
 
-    Object.keys(this.props.stocks).map((stock_name, index) => {
-      let current_stock = this.props.stocks[stock_name];
+    Object.keys(this.props.quotes).map((item_name, index) => {
+      let current_item = this.props.quotes[item_name];
       let chart_dataset = chart.data.datasets.find((dataset) => {
-        return dataset.label === stock_name.toUpperCase();
+        return dataset.label === item_name.toUpperCase();
       });
 
-      if (current_stock.is_selected) {
-        let current_stock = this.props.stocks[stock_name];
+      if (current_item.is_selected) {
+        let current_item = this.props.quotes[item_name];
         if (chart_dataset) {
           // only update the data, don't create a new dataset for the graph
-          chart_dataset.data = this.getStockValues(current_stock);
+          chart_dataset.data = this.getItemValues(current_item);
         } else {
           // create a new dataset for graph
-          if (current_stock) {
+          if (current_item) {
             chart.data.datasets = chart.data.datasets.concat([
               chartDataset(
-                stock_name,
+                item_name,
                 chartColors[index],
-                this.getStockValues(current_stock)
+                this.getItemValues(current_item)
               ),
             ]);
           }
@@ -54,8 +54,8 @@ class StocksGraph extends React.Component {
   };
 
   // returns an array of objects, {t: timestamp, y: value}
-  getStockValues = (stock) => {
-    return stock.history.map((history) => {
+  getItemValues = (quote) => {
+    return quote.history.map((history) => {
       return { t: new Date(history.time), y: history.value };
     });
   };
@@ -75,7 +75,7 @@ class StocksGraph extends React.Component {
             {this.refs.chart &&
             this.refs.chart.chartInstance.data.datasets.length > 0
               ? "Scroll/pinch to zoom, drag to pan."
-              : "Click on any stocks on your left to see graphs."}
+              : "Click on any items on your left to see graphs."}
           </p>
           <button
             className="button is-small is-pulled-right"
@@ -90,4 +90,4 @@ class StocksGraph extends React.Component {
   }
 }
 
-export default StocksGraph;
+export default MarketItemsGraph;
