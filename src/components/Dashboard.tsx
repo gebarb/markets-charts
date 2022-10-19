@@ -10,9 +10,13 @@ import StockState from "../models/stocks";
 
 // https://eodhistoricaldata.com/financial-apis/new-real-time-data-api-websockets/
 const stocksUrl = "wss://ws.eodhistoricaldata.com/ws/us?api_token=demo";
+const forexUrl = "wss://ws.eodhistoricaldata.com/ws/forex?api_token=demo";
+const cryptoUrl = "wss://ws.eodhistoricaldata.com/ws/crypto?api_token=demo";
 
 class Dashboard extends React.Component<SpinnerProps, StockState> {
-  connection!: WebSocket;
+  stocksConnection!: WebSocket;
+  forexConnection!: WebSocket;
+  cryptoConnection!: WebSocket;
 
   state: StockState = {
     // stocks = {name: {current_value: 12, history: [{time: '2131', value: 45}, ...], is_selected: false}, ...}
@@ -22,10 +26,9 @@ class Dashboard extends React.Component<SpinnerProps, StockState> {
   };
 
   componentDidMount = () => {
-    this.connection = new WebSocket(stocksUrl);
-    // Create necessary Subscriptions
-    this.connection.onopen = () => {
-      this.connection.send(
+    this.stocksConnection = new WebSocket(stocksUrl);
+    this.stocksConnection.onopen = () => {
+      this.stocksConnection.send(
         new Blob(
           [
             JSON.stringify({
@@ -39,15 +42,56 @@ class Dashboard extends React.Component<SpinnerProps, StockState> {
         )
       );
     };
-    // TODO: Refactor to use REAL Data rather than SIMULATED
-    this.connection.onmessage = this.saveNewStockValues;
-    this.connection.onclose = () => {
+    this.stocksConnection.onmessage = this.saveNewStockValues;
+    this.stocksConnection.onclose = () => {
+      this.setState({ connectionError: true });
+    };
+
+    this.forexConnection = new WebSocket(forexUrl);
+    this.forexConnection.onopen = () => {
+      this.forexConnection.send(
+        new Blob(
+          [
+            JSON.stringify({
+              action: "subscribe",
+              symbols: "EURUSD",
+            }),
+          ],
+          {
+            type: "application/json",
+          }
+        )
+      );
+    };
+    this.forexConnection.onmessage = this.saveNewStockValues;
+    this.forexConnection.onclose = () => {
+      this.setState({ connectionError: true });
+    };
+
+    this.cryptoConnection = new WebSocket(cryptoUrl);
+    this.cryptoConnection.onopen = () => {
+      this.cryptoConnection.send(
+        new Blob(
+          [
+            JSON.stringify({
+              action: "subscribe",
+              symbols: "ETH-USD, BTC-USD",
+            }),
+          ],
+          {
+            type: "application/json",
+          }
+        )
+      );
+    };
+    this.cryptoConnection.onmessage = this.saveNewStockValues;
+    this.cryptoConnection.onclose = () => {
       this.setState({ connectionError: true });
     };
   };
 
   componentWillUnmount = () => {
-    this.connection.send(
+    this.stocksConnection.send(
       new Blob(
         [
           JSON.stringify({
@@ -60,6 +104,34 @@ class Dashboard extends React.Component<SpinnerProps, StockState> {
         }
       )
     );
+
+    this.forexConnection.send(
+      new Blob(
+        [
+          JSON.stringify({
+            action: "unsubscribe",
+            symbols: "EURUSD",
+          }),
+        ],
+        {
+          type: "application/json",
+        }
+      )
+    );
+
+    // this.cryptoConnection.send(
+    //   new Blob(
+    //     [
+    //       JSON.stringify({
+    //         action: "unsubscribe",
+    //         symbols: "ETH-USD, BTC-USD",
+    //       }),
+    //     ],
+    //     {
+    //       type: "application/json",
+    //     }
+    //   )
+    // );
   };
 
   saveNewStockValues = (event: { data: string }) => {
@@ -71,21 +143,23 @@ class Dashboard extends React.Component<SpinnerProps, StockState> {
     let current_time = Date.now();
     let new_stocks = this.state.stocks;
     // Logic for ws.eodhistoricaldata.com
-    if (result.s && result.p) {
-      if (this.state.stocks[result.s]) {
-        new_stocks[result.s].current_value > Number(result.p)
+    const ticker: string = result.s;
+    const val: number = result.p ? result.p : result.a;
+    if (ticker && val) {
+      if (this.state.stocks[ticker]) {
+        new_stocks[ticker].current_value > Number(val)
           ? up_values_count++
           : down_values_count++;
 
-        new_stocks[result.s].current_value = Number(result.p);
-        new_stocks[result.s].history.push({
+        new_stocks[ticker].current_value = Number(val);
+        new_stocks[ticker].history.push({
           time: current_time,
-          value: Number(result.p),
+          value: Number(val),
         });
       } else {
-        new_stocks[result.s] = {
-          current_value: result.p,
-          history: [{ time: Date.now(), value: Number(result.p) }],
+        new_stocks[ticker] = {
+          current_value: val,
+          history: [{ time: Date.now(), value: Number(val) }],
           is_selected: false,
         };
       }
