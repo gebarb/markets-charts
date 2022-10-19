@@ -3,7 +3,7 @@ import { Sparklines, SparklinesLine } from "react-sparklines";
 import TimeAgo from "react-timeago";
 
 const StockRow = (props: {
-  stock_data: { history: any; is_selected?: any; current_value: any };
+  stock_data: { history: any; is_selected?: any; current_value: number };
   stock_name: string | undefined;
   toggleStockSelection: {
     bind: (
