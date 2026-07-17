@@ -1,55 +1,64 @@
-import React from "react";
-import { Sparklines, SparklinesLine } from "react-sparklines";
+import { memo } from "react";
 import TimeAgo from "react-timeago";
+import { cn } from "@/lib/utils";
+import { TableCell, TableRow } from "@/components/ui/table";
+import type { QuoteItem } from "@/types/market";
 
-const MarketItemRow = (props: {
-  item_data: { history: any; is_selected?: any; current_value: number };
+const MarketItemRow = memo((props: {
+  item_data: QuoteItem;
   item_name: string | undefined;
-  toggleItemSelection: {
-    bind: (
-      arg0: undefined,
-      arg1: any
-    ) => React.MouseEventHandler<HTMLTableRowElement> | undefined;
-  };
+  toggleItemSelection: (item_name: string) => void;
 }) => {
   const getQuoteValueColor = (quote: {
     current_value: number;
     history: { value: number }[];
   }) => {
+    if (quote.history.length < 2) return undefined;
     if (quote.current_value < quote.history.slice(-2)[0].value) {
-      return "red";
+      return "text-red-500";
     } else if (quote.current_value > quote.history.slice(-2)[0].value) {
-      return "green";
-    } else {
-      return undefined;
+      return "text-green-500";
     }
+    return undefined;
   };
 
-  let history = props.item_data.history;
+  const history = props.item_data.history;
   return (
-    <tr
-      className={props.item_data.is_selected ? "selected" : undefined}
+    <TableRow
+      className={cn(
+        "cursor-pointer",
+        props.item_data.is_selected &&
+          "bg-primary/30 shadow-[inset_1px_1px_5px_rgba(85,85,85,0.49)]"
+      )}
       id={props.item_name}
-      onClick={props.toggleItemSelection.bind(this, props.item_name)}
+      onClick={() => props.toggleItemSelection(props.item_name!)}
     >
-      <td>{props.item_name ? props.item_name.toUpperCase() : ""}</td>
-      <td className={getQuoteValueColor(props.item_data)}>
+      <TableCell>{props.item_name ? props.item_name.toUpperCase() : ""}</TableCell>
+      <TableCell className={getQuoteValueColor(props.item_data)}>
         {props.item_data.current_value.toFixed(2)}
-      </td>
-      <td>
-        <Sparklines
-          data={history.map((history: { value: any }) => {
-            return history.value;
+      </TableCell>
+      <TableCell>
+        <div className="flex h-6 items-end gap-0.5">
+          {history.slice(-10).map((h, i) => {
+            const min = Math.min(...history.slice(-10).map((v) => v.value));
+            const max = Math.max(...history.slice(-10).map((v) => v.value));
+            const range = max - min || 1;
+            const height = ((h.value - min) / range) * 100;
+            return (
+              <div
+                key={i}
+                className="w-1 bg-primary"
+                style={{ height: `${Math.max(10, height)}%` }}
+              />
+            );
           })}
-        >
-          <SparklinesLine color="blue" />
-        </Sparklines>
-      </td>
-      <td className="updated_at">
+        </div>
+      </TableCell>
+      <TableCell className="text-xs">
         <TimeAgo date={history.slice(-1)[0].time} />
-      </td>
-    </tr>
+      </TableCell>
+    </TableRow>
   );
-};
+});
 
 export default MarketItemRow;
