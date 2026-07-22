@@ -1,19 +1,13 @@
 import { Detector } from "react-detect-offline";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
-import DataSourceToggle from "./DataSourceToggle";
-import type { DataSourceMode } from "@/types/market";
 
 interface HeaderProps {
   connectionHealth?: "healthy" | "degraded" | "unhealthy";
-  dataSourceMode?: DataSourceMode;
-  onDataSourceModeChange?: (mode: DataSourceMode) => void;
 }
 
 function Header({
   connectionHealth = "healthy",
-  dataSourceMode = "websocket",
-  onDataSourceModeChange,
 }: HeaderProps) {
   const getHealthBadge = () => {
     if (connectionHealth === "healthy") {
@@ -42,9 +36,6 @@ function Header({
           {getHealthBadge()}
         </div>
         <div className="flex items-center gap-4">
-          {onDataSourceModeChange && (
-            <DataSourceToggle mode={dataSourceMode} onModeChange={onDataSourceModeChange} />
-          )}
           <div className="text-sm text-muted-foreground">
             Real-time market data visualization
           </div>

@@ -52,16 +52,15 @@ const MarketItemsList = memo((props: {
             Click on an item to add/remove from graph
           </p>
         ) : null}
-        <Table>
+        <Table className="w-full">
           <TableHeader>
             <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>
-                Value
-                <MarketTrendArrow current_trend={props.market_trend} />
+              <TableHead className="whitespace-nowrap">Name</TableHead>
+              <TableHead className="whitespace-nowrap">
+                Value <MarketTrendArrow current_trend={props.market_trend} />
               </TableHead>
-              <TableHead>History</TableHead>
-              <TableHead>Updated At</TableHead>
+              <TableHead className="whitespace-nowrap">History</TableHead>
+              <TableHead className="whitespace-nowrap">Last Updated</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

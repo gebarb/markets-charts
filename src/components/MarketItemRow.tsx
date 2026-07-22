@@ -54,7 +54,7 @@ const MarketItemRow = memo((props: {
           })}
         </div>
       </TableCell>
-      <TableCell className="text-xs">
+      <TableCell className="text-xs whitespace-nowrap">
         <TimeAgo date={history.slice(-1)[0].time} />
       </TableCell>
     </TableRow>
