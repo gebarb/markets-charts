@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState } from 'react';
 import {
   LineChart,
   Line,
@@ -9,26 +9,21 @@ import {
   Legend,
   ResponsiveContainer,
   Brush,
-} from "recharts";
-import { format } from "date-fns";
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import type { QuotesMap } from "@/types/market";
+} from 'recharts';
+import { format } from 'date-fns';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import type { QuotesMap } from '@/types/market';
 
 const CHART_COLORS = [
-  "#3b82f6", // blue
-  "#ef4444", // red
-  "#22c55e", // green
-  "#f59e0b", // amber
-  "#8b5cf6", // violet
-  "#ec4899", // pink
-  "#06b6d4", // cyan
-  "#f97316", // orange
+  '#3b82f6', // blue
+  '#ef4444', // red
+  '#22c55e', // green
+  '#f59e0b', // amber
+  '#8b5cf6', // violet
+  '#ec4899', // pink
+  '#06b6d4', // cyan
+  '#f97316', // orange
 ];
 
 interface ChartDataPoint {
@@ -46,7 +41,7 @@ function MarketItemsGraph({ quotes }: MarketItemsGraphProps) {
 
   const chartData = useMemo(() => {
     const selectedItems = Object.entries(quotes).filter(
-      ([, item]) => item.is_selected
+      ([, item]) => item.is_selected,
     );
 
     if (selectedItems.length === 0) {
@@ -65,7 +60,7 @@ function MarketItemsGraph({ quotes }: MarketItemsGraphProps) {
     const data: ChartDataPoint[] = sortedTimestamps.map((timestamp) => {
       const point: ChartDataPoint = {
         timestamp,
-        time: format(timestamp, "h:mm:ss a"),
+        time: format(timestamp, 'h:mm:ss a'),
       };
 
       selectedItems.forEach(([name, item]) => {
@@ -138,12 +133,12 @@ function MarketItemsGraph({ quotes }: MarketItemsGraphProps) {
               />
               <Tooltip
                 contentStyle={{
-                  backgroundColor: "#1e293b",
-                  border: "1px solid #334155",
-                  borderRadius: "0.5rem",
+                  backgroundColor: '#1e293b',
+                  border: '1px solid #334155',
+                  borderRadius: '0.5rem',
                 }}
-                itemStyle={{ color: "#e2e8f0" }}
-                labelStyle={{ color: "#94a3b8" }}
+                itemStyle={{ color: '#e2e8f0' }}
+                labelStyle={{ color: '#94a3b8' }}
               />
               <Legend />
               {selectedItems.map(([name], index) => (

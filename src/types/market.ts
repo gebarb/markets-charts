@@ -11,7 +11,7 @@ export interface QuoteItem {
 
 export type QuotesMap = Record<string, QuoteItem>;
 
-export type MarketTrend = "up" | "down" | undefined;
+export type MarketTrend = 'up' | 'down' | undefined;
 
 export interface EodHistoricalMessage {
   s?: string;
@@ -28,13 +28,10 @@ export interface CoinbaseMessage {
 export type WebSocketMarketMessage = EodHistoricalMessage | CoinbaseMessage;
 
 export type ConnectionStatus =
-  | "connecting"
-  | "connected"
-  | "disconnected"
-  | "error";
+  'connecting' | 'connected' | 'disconnected' | 'error';
 
-export type DataSourceMode = "websocket" | "rest-api";
+export type DataSourceMode = 'websocket' | 'rest-api';
 
 export const MAX_HISTORY_POINTS = 500;
 export const UPDATE_THROTTLE_MS = 100;
-export const SELECTED_ITEMS_KEY = "markets-charts-selected-items";
+export const SELECTED_ITEMS_KEY = 'markets-charts-selected-items';

@@ -11,9 +11,9 @@ export interface AggregatedQuote {
   assetId: string;
   price: number;
   sources: string[];
-  confidence: "high" | "medium" | "low" | "conflict";
+  confidence: 'high' | 'medium' | 'low' | 'conflict';
   conflict?: {
-    status: "conflict";
+    status: 'conflict';
     preferred: string;
   };
 }

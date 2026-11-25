@@ -5,19 +5,19 @@ import type {
   MarketTrend,
   QuotesMap,
   WebSocketMarketMessage,
-} from "@/types/market";
-import { MAX_HISTORY_POINTS } from "@/types/market";
+} from '@/types/market';
+import { MAX_HISTORY_POINTS } from '@/types/market';
 
 export function isEodHistoricalMessage(
-  msg: WebSocketMarketMessage
+  msg: WebSocketMarketMessage,
 ): msg is EodHistoricalMessage {
-  return "s" in msg || ("p" in msg && !("product_id" in msg));
+  return 's' in msg || ('p' in msg && !('product_id' in msg));
 }
 
 export function isCoinbaseMessage(
-  msg: WebSocketMarketMessage
+  msg: WebSocketMarketMessage,
 ): msg is CoinbaseMessage {
-  return "product_id" in msg || "price" in msg;
+  return 'product_id' in msg || 'price' in msg;
 }
 
 export function parseMarketMessage(raw: string): {
@@ -58,7 +58,7 @@ export function updateQuote(
   quotes: QuotesMap,
   ticker: string,
   value: number,
-  timestamp: number
+  timestamp: number,
 ): { quotes: QuotesMap; upCount: number; downCount: number } {
   const next = { ...quotes };
   let upCount = 0;
@@ -94,15 +94,15 @@ export function updateQuote(
 
 export function calculateMarketTrend(
   upCount: number,
-  downCount: number
+  downCount: number,
 ): MarketTrend {
   if (upCount === downCount) return undefined;
-  return upCount > downCount ? "up" : "down";
+  return upCount > downCount ? 'up' : 'down';
 }
 
 export function toggleQuoteSelection(
   quotes: QuotesMap,
-  itemName: string
+  itemName: string,
 ): QuotesMap {
   const next = { ...quotes };
   next[itemName] = {
@@ -126,7 +126,7 @@ export function resetQuoteHistory(quotes: QuotesMap): QuotesMap {
 
 function loadSelectedPreference(ticker: string): boolean {
   try {
-    const stored = localStorage.getItem("markets-charts-selected-items");
+    const stored = localStorage.getItem('markets-charts-selected-items');
     if (!stored) return false;
     const selected = JSON.parse(stored) as string[];
     return selected.includes(ticker);
@@ -141,8 +141,8 @@ function persistSelectedItems(quotes: QuotesMap): void {
       .filter(([, item]) => item.is_selected)
       .map(([name]) => name);
     localStorage.setItem(
-      "markets-charts-selected-items",
-      JSON.stringify(selected)
+      'markets-charts-selected-items',
+      JSON.stringify(selected),
     );
   } catch {
     // localStorage may be unavailable

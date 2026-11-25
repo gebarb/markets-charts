@@ -1,11 +1,14 @@
-import type { MarketDataProvider, ProviderCapabilities } from "./providers/Provider";
+import type {
+  MarketDataProvider,
+  ProviderCapabilities,
+} from './providers/Provider';
 
 class ProviderRegistry {
   private providers: Map<string, MarketDataProvider> = new Map();
   private isBrowser: boolean;
 
   constructor() {
-    this.isBrowser = typeof window !== "undefined";
+    this.isBrowser = typeof window !== 'undefined';
   }
 
   register(provider: MarketDataProvider): void {
@@ -31,8 +34,12 @@ class ProviderRegistry {
     });
   }
 
-  getByCapability(capability: keyof ProviderCapabilities): MarketDataProvider[] {
-    return this.getAvailable().filter((provider) => provider.capabilities[capability]);
+  getByCapability(
+    capability: keyof ProviderCapabilities,
+  ): MarketDataProvider[] {
+    return this.getAvailable().filter(
+      (provider) => provider.capabilities[capability],
+    );
   }
 
   clear(): void {

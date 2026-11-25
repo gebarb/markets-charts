@@ -1,4 +1,4 @@
-import type { Asset, Candle, Quote, Range } from "../models";
+import type { Asset, Candle, Quote, Range } from '../models';
 
 export interface ProviderCapabilities {
   browser: boolean;

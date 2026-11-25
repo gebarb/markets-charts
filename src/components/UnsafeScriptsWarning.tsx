@@ -1,10 +1,5 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Spinner } from "@/components/ui/spinner";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Spinner } from '@/components/ui/spinner';
 
 const UnsafeScriptsWarning = () => {
   return (
@@ -17,10 +12,12 @@ const UnsafeScriptsWarning = () => {
       </Card>
       <Card>
         <CardContent className="pt-6">
-          You need to click on <code className="rounded bg-muted px-1">Load Unsafe Scripts</code> to
+          You need to click on{' '}
+          <code className="rounded bg-muted px-1">Load Unsafe Scripts</code> to
           proceed.
           <br />
-          Look for the <code className="rounded bg-muted px-1">shield icon</code> on your
+          Look for the{' '}
+          <code className="rounded bg-muted px-1">shield icon</code> on your
           browser&apos;s address bar. &#8679;
         </CardContent>
       </Card>

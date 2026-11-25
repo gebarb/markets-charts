@@ -48,27 +48,27 @@ describe('marketData', () => {
     it('should parse EOD Historical Data message', () => {
       const raw = JSON.stringify({ s: 'AAPL', p: 150.25 });
       const result = parseMarketMessage(raw);
-      
+
       expect(result).toEqual({ ticker: 'AAPL', value: 150.25 });
     });
 
     it('should parse Coinbase message', () => {
       const raw = JSON.stringify({ product_id: 'ETH-USD', price: '2500.50' });
       const result = parseMarketMessage(raw);
-      
-      expect(result).toEqual({ ticker: 'ETH-USD', value: 2500.50 });
+
+      expect(result).toEqual({ ticker: 'ETH-USD', value: 2500.5 });
     });
 
     it('should return null for invalid JSON', () => {
       const result = parseMarketMessage('invalid');
-      
+
       expect(result).toBeNull();
     });
 
     it('should return null for message without valid data', () => {
       const raw = JSON.stringify({ type: 'heartbeat' });
       const result = parseMarketMessage(raw);
-      
+
       expect(result).toBeNull();
     });
   });
@@ -96,9 +96,9 @@ describe('marketData', () => {
           is_selected: false,
         },
       };
-      
+
       const result = toggleQuoteSelection(quotes, 'AAPL');
-      
+
       expect(result.AAPL.is_selected).toBe(true);
     });
 
@@ -110,9 +110,9 @@ describe('marketData', () => {
           is_selected: true,
         },
       };
-      
+
       const result = toggleQuoteSelection(quotes, 'AAPL');
-      
+
       expect(result.AAPL.is_selected).toBe(false);
     });
   });
@@ -130,9 +130,9 @@ describe('marketData', () => {
           is_selected: false,
         },
       };
-      
+
       const result = resetQuoteHistory(quotes);
-      
+
       expect(result.AAPL.history).toHaveLength(1);
       expect(result.AAPL.history[0].value).toBe(150);
     });
@@ -145,9 +145,9 @@ describe('marketData', () => {
           is_selected: false,
         },
       };
-      
+
       const result = resetQuoteHistory(quotes);
-      
+
       expect(result.AAPL.history).toHaveLength(0);
     });
   });

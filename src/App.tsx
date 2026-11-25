@@ -1,8 +1,8 @@
-import { useState } from "react";
-import Dashboard from "./components/Dashboard";
-import ErrorBoundary from "./components/ErrorBoundary";
-import UnsafeScriptsWarning from "./components/UnsafeScriptsWarning";
-import "./market-data/init"; // Initialize providers at module load time
+import { useState } from 'react';
+import Dashboard from './components/Dashboard';
+import ErrorBoundary from './components/ErrorBoundary';
+import UnsafeScriptsWarning from './components/UnsafeScriptsWarning';
+import './market-data/init'; // Initialize providers at module load time
 
 function App() {
   const [showSpinner, setShowSpinner] = useState(true);

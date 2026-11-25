@@ -1,13 +1,13 @@
-import { useCallback, useEffect, useState, useRef } from "react";
-import { marketDataService } from "@/market-data";
-import { getAssetById } from "@/market-data/assets";
-import type { QuotesMap } from "@/types/market";
+import { useCallback, useEffect, useState, useRef } from 'react';
+import { marketDataService } from '@/market-data';
+import { getAssetById } from '@/market-data/assets';
+import type { QuotesMap } from '@/types/market';
 import {
   calculateMarketTrend,
   resetQuoteHistory,
   toggleQuoteSelection,
   updateQuote,
-} from "@/utils/marketData";
+} from '@/utils/marketData';
 
 export interface UseMarketDataServiceReturn {
   quotes: QuotesMap;
@@ -16,7 +16,7 @@ export interface UseMarketDataServiceReturn {
   areMarketsLoaded: boolean;
   toggleItemSelection: (itemName: string) => void;
   resetData: () => void;
-  connectionHealth: "healthy" | "degraded" | "unhealthy";
+  connectionHealth: 'healthy' | 'degraded' | 'unhealthy';
 }
 
 export function useMarketDataService(): UseMarketDataServiceReturn {
@@ -24,6 +24,7 @@ export function useMarketDataService(): UseMarketDataServiceReturn {
   const [marketTrend, setMarketTrend] = useState<string | undefined>(undefined);
   const [connectionError] = useState(false);
   const [providersReady, setProvidersReady] = useState(false);
+
   const initializedRef = useRef(false);
 
   const toggleItemSelection = useCallback((itemName: string) => {
@@ -36,42 +37,81 @@ export function useMarketDataService(): UseMarketDataServiceReturn {
 
   const areMarketsLoaded = Object.keys(quotes).length >= 1;
 
-  // Check if providers are available
+  // Check if providers are available.
   useEffect(() => {
     if (initializedRef.current) return;
 
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+    let cancelled = false;
+
     const checkProviders = () => {
+      if (cancelled) return;
+
       const availableProviders = marketDataService.getAvailableProviders();
+
       if (availableProviders.length > 0) {
-        setProvidersReady(true);
         initializedRef.current = true;
+        setProvidersReady(true);
       } else {
-        // Retry after a short delay
-        setTimeout(checkProviders, 100);
+        timeoutId = setTimeout(checkProviders, 100);
       }
     };
 
     checkProviders();
+
+    return () => {
+      cancelled = true;
+
+      if (timeoutId !== null) {
+        clearTimeout(timeoutId);
+      }
+    };
   }, []);
 
-  // Subscribe to all assets once providers are ready
+  // Subscribe to all assets once providers are ready.
   useEffect(() => {
     if (!providersReady) return;
 
-    const assetIds = ["AAPL", "MSFT", "AMZN", "TSLA", "GOOGL", "XAUUSD", "XAGUSD", "EURUSD", "BTC-USD", "ETH-USD"];
+    const assetIds = [
+      'AAPL',
+      'MSFT',
+      'AMZN',
+      'TSLA',
+      'GOOGL',
+      'XAUUSD',
+      'XAGUSD',
+      'EURUSD',
+      'BTC-USD',
+      'ETH-USD',
+    ];
+
     const subscriptions: Array<{ unsubscribe: () => void }> = [];
 
     assetIds.forEach((assetId) => {
       const asset = getAssetById(assetId);
+
       if (asset) {
         try {
-          const subscription = marketDataService.subscribe(asset, (aggregatedQuote) => {
-            setQuotes((prev) => {
-              const result = updateQuote(prev, assetId, aggregatedQuote.price, Date.now());
-              setMarketTrend(calculateMarketTrend(result.upCount, result.downCount));
-              return result.quotes;
-            });
-          });
+          const subscription = marketDataService.subscribe(
+            asset,
+            (aggregatedQuote) => {
+              setQuotes((prev) => {
+                const result = updateQuote(
+                  prev,
+                  assetId,
+                  aggregatedQuote.price,
+                  Date.now(),
+                );
+
+                setMarketTrend(
+                  calculateMarketTrend(result.upCount, result.downCount),
+                );
+
+                return result.quotes;
+              });
+            },
+          );
+
           subscriptions.push(subscription);
         } catch (error) {
           console.warn(`Failed to subscribe to ${assetId}:`, error);
@@ -91,6 +131,6 @@ export function useMarketDataService(): UseMarketDataServiceReturn {
     areMarketsLoaded,
     toggleItemSelection,
     resetData,
-    connectionHealth: "healthy",
+    connectionHealth: 'healthy',
   };
 }
