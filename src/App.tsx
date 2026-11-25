@@ -1,42 +1,23 @@
-import React, { Component } from "react";
-import "./App.css";
+import { useState } from "react";
 import Dashboard from "./components/Dashboard";
+import ErrorBoundary from "./components/ErrorBoundary";
 import UnsafeScriptsWarning from "./components/UnsafeScriptsWarning";
+import "./market-data/init"; // Initialize providers at module load time
 
-class App extends Component {
-  state = {
-    hasError: false,
-    showSpinner: true,
+function App() {
+  const [showSpinner, setShowSpinner] = useState(true);
+
+  const hideSpinner = () => {
+    setShowSpinner(false);
   };
 
-  static getDerivedStateFromError(error: any) {
-    // Update state so the next render will show the fallback UI.
-    console.log("some error has occured");
-    return { hasError: true };
-  }
-
-  componentDidCatch(error: any, info: any) {
-    // You can also log the error to an error reporting service
-    console.log(error, info);
-  }
-
-  hideSpinner = () => {
-    this.setState({ showSpinner: false });
-  };
-
-  render() {
-    if (this.state.hasError) {
-      return <UnsafeScriptsWarning />;
-    }
-    return (
-      <div className="App">
-        <Dashboard
-          hideSpinner={this.hideSpinner}
-          showSpinner={this.state.showSpinner}
-        />
+  return (
+    <ErrorBoundary fallback={<UnsafeScriptsWarning />}>
+      <div className="min-h-screen bg-[radial-gradient(rgb(1,8,53),rgb(5,32,12))] text-foreground">
+        <Dashboard hideSpinner={hideSpinner} showSpinner={showSpinner} />
       </div>
-    );
-  }
+    </ErrorBoundary>
+  );
 }
 
 export default App;
