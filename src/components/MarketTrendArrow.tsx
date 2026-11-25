@@ -1,12 +1,11 @@
-
 const MarketTrendArrow = (props: { current_trend: string | undefined }) => {
   const getArrow = () => {
-    if (props.current_trend === "up") {
+    if (props.current_trend === 'up') {
       return <span className="text-green-500">&#8679;</span>;
-    } else if (props.current_trend === "down") {
+    } else if (props.current_trend === 'down') {
       return <span className="text-red-500">&#8681;</span>;
     }
-    return "-";
+    return '-';
   };
 
   return (

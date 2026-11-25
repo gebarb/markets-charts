@@ -12,5 +12,5 @@ export interface Candle {
 export interface Range {
   from: Date;
   to: Date;
-  interval?: "1m" | "5m" | "15m" | "1h" | "1d" | "1w" | "1M";
+  interval?: '1m' | '5m' | '15m' | '1h' | '1d' | '1w' | '1M';
 }

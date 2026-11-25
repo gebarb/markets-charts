@@ -1,8 +1,8 @@
-import type { Asset, Candle, Quote, AggregatedQuote, Range } from "./models";
-import type { Subscription } from "./providers/Provider";
-import { providerSelector } from "./ProviderSelector";
-import { subscriptionManager } from "./SubscriptionManager";
-import { quoteAggregator } from "./QuoteAggregator";
+import type { Asset, Candle, Quote, AggregatedQuote, Range } from './models';
+import type { Subscription } from './providers/Provider';
+import { providerSelector } from './ProviderSelector';
+import { subscriptionManager } from './SubscriptionManager';
+import { quoteAggregator } from './QuoteAggregator';
 
 export class MarketDataService {
   async getQuote(asset: Asset): Promise<AggregatedQuote> {
@@ -21,7 +21,7 @@ export class MarketDataService {
 
     const quotes = await Promise.allSettled(quotePromises);
     const successfulQuotes = quotes
-      .filter((result) => result.status === "fulfilled")
+      .filter((result) => result.status === 'fulfilled')
       .map((result) => (result as PromiseFulfilledResult<Quote>).value);
 
     if (successfulQuotes.length === 0) {
@@ -47,7 +47,10 @@ export class MarketDataService {
           const candles = await provider.getHistory(asset, range);
           return candles;
         } catch (error) {
-          console.warn(`Provider ${provider.id} failed for ${asset.id}:`, error);
+          console.warn(
+            `Provider ${provider.id} failed for ${asset.id}:`,
+            error,
+          );
           continue;
         }
       }
@@ -59,7 +62,7 @@ export class MarketDataService {
   subscribe(
     asset: Asset,
     callback: (quote: AggregatedQuote) => void,
-    providerId?: string
+    providerId?: string,
   ): Subscription {
     // Subscribe to raw quotes from provider
     const rawSubscription = subscriptionManager.subscribe(
@@ -69,7 +72,7 @@ export class MarketDataService {
         const aggregated = quoteAggregator.aggregate([rawQuote]);
         callback(aggregated);
       },
-      providerId
+      providerId,
     );
 
     return rawSubscription;
@@ -77,7 +80,7 @@ export class MarketDataService {
 
   subscribeMultiSource(
     asset: Asset,
-    callback: (quote: AggregatedQuote) => void
+    callback: (quote: AggregatedQuote) => void,
   ): Subscription {
     const providers = providerSelector.selectProvidersForAsset(asset, {
       requireRealtime: true,
@@ -110,14 +113,12 @@ export class MarketDataService {
 
   getAvailableProviders(): string[] {
     return providerSelector
-      .selectAllProvidersForCapability("quotes")
+      .selectAllProvidersForCapability('quotes')
       .map((p) => p.id);
   }
 
   getProvidersForAsset(asset: Asset): string[] {
-    return providerSelector
-      .selectProvidersForAsset(asset)
-      .map((p) => p.id);
+    return providerSelector.selectProvidersForAsset(asset).map((p) => p.id);
   }
 }
 

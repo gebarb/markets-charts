@@ -1,10 +1,14 @@
-import type { Asset, Quote } from "../../models";
-import type { MarketDataProvider, ProviderCapabilities, Subscription } from "../Provider";
+import type { Asset, Quote } from '../../models';
+import type {
+  MarketDataProvider,
+  ProviderCapabilities,
+  Subscription,
+} from '../Provider';
 
-const WS_API_KEY = import.meta.env.VITE_EOD_WS_KEY || "demo";
+const WS_API_KEY = import.meta.env.VITE_EOD_WS_KEY || 'demo';
 
 export class EodhdWebSocketProvider implements MarketDataProvider {
-  id = "eodhd-websocket";
+  id = 'eodhd-websocket';
   capabilities: ProviderCapabilities = {
     browser: true,
     server: true,
@@ -17,12 +21,11 @@ export class EodhdWebSocketProvider implements MarketDataProvider {
   private sockets: Map<string, WebSocket> = new Map();
   private callbacks: Map<string, Set<(quote: Quote) => void>> = new Map();
   private subscriptions: Map<string, Set<string>> = new Map(); // asset IDs per market
-  private connectionTimeouts: Map<string, ReturnType<typeof setTimeout>> = new Map();
+  private connectionTimeouts: Map<string, ReturnType<typeof setTimeout>> =
+    new Map();
 
   supports(asset: Asset): boolean {
-    return asset.instruments.some(
-      (inst) => inst.provider === "eodhd"
-    );
+    return asset.instruments.some((inst) => inst.provider === 'eodhd');
   }
 
   private getWebSocketUrl(market: string): string {
@@ -39,7 +42,10 @@ export class EodhdWebSocketProvider implements MarketDataProvider {
       // Handle forex format: {s: "EURUSD", a: 1.1443, b: 1.1436}
       if (parsed.s && (parsed.a || parsed.b)) {
         // Use the average of bid and ask, or whichever is available
-        const price = parsed.a && parsed.b ? (parseFloat(parsed.a) + parseFloat(parsed.b)) / 2 : parseFloat(parsed.a || parsed.b);
+        const price =
+          parsed.a && parsed.b
+            ? (parseFloat(parsed.a) + parseFloat(parsed.b)) / 2
+            : parseFloat(parsed.a || parsed.b);
         return { ticker: parsed.s, value: price };
       }
       return null;
@@ -50,7 +56,7 @@ export class EodhdWebSocketProvider implements MarketDataProvider {
 
   subscribe(asset: Asset, callback: (quote: Quote) => void): Subscription {
     const instrument = asset.instruments.find(
-      (inst) => inst.provider === "eodhd"
+      (inst) => inst.provider === 'eodhd',
     );
 
     if (!instrument) {
@@ -90,7 +96,9 @@ export class EodhdWebSocketProvider implements MarketDataProvider {
             console.log(`[EODHD WS] Received message:`, parsed);
             // Map ticker back to asset ID
             const assetId = this.findAssetIdByTicker(parsed.ticker);
-            console.log(`[EODHD WS] Mapped ticker ${parsed.ticker} to asset ${assetId}`);
+            console.log(
+              `[EODHD WS] Mapped ticker ${parsed.ticker} to asset ${assetId}`,
+            );
             if (assetId) {
               const quote: Quote = {
                 assetId,
@@ -100,11 +108,16 @@ export class EodhdWebSocketProvider implements MarketDataProvider {
                 source: this.id,
               };
 
-              console.log(`[EODHD WS] Sending quote to callbacks for ${assetId}:`, quote);
+              console.log(
+                `[EODHD WS] Sending quote to callbacks for ${assetId}:`,
+                quote,
+              );
               // Fan out to all callbacks for this asset
               this.callbacks.get(assetId)?.forEach((cb) => cb(quote));
             } else {
-              console.warn(`[EODHD WS] No asset mapping found for ticker ${parsed.ticker}`);
+              console.warn(
+                `[EODHD WS] No asset mapping found for ticker ${parsed.ticker}`,
+              );
             }
           } else {
             console.log(`[EODHD WS] Could not parse message:`, event.data);
@@ -116,7 +129,11 @@ export class EodhdWebSocketProvider implements MarketDataProvider {
         };
 
         ws.onclose = (event) => {
-          console.log(`[EODHD WS] Connection closed for ${market}:`, event.code, event.reason);
+          console.log(
+            `[EODHD WS] Connection closed for ${market}:`,
+            event.code,
+            event.reason,
+          );
           this.sockets.delete(market);
           this.connectionTimeouts.delete(market);
         };
@@ -188,11 +205,14 @@ export class EodhdWebSocketProvider implements MarketDataProvider {
 
     if (symbols.length > 0) {
       const subscribeMsg = JSON.stringify({
-        action: "subscribe",
-        symbols: symbols.join(", "),
+        action: 'subscribe',
+        symbols: symbols.join(', '),
       });
-      ws.send(new Blob([subscribeMsg], { type: "application/json" }));
-      console.log(`[EODHD WS] Subscribed to ${symbols.length} symbols in ${market}:`, symbols);
+      ws.send(new Blob([subscribeMsg], { type: 'application/json' }));
+      console.log(
+        `[EODHD WS] Subscribed to ${symbols.length} symbols in ${market}:`,
+        symbols,
+      );
       console.log(`[EODHD WS] Subscription message:`, subscribeMsg);
     }
   }
@@ -200,16 +220,16 @@ export class EodhdWebSocketProvider implements MarketDataProvider {
   private findAssetIdByTicker(ticker: string): string | undefined {
     // Map ticker symbols back to asset IDs
     const tickerToAssetMap: Record<string, string> = {
-      "AAPL": "AAPL",
-      "MSFT": "MSFT",
-      "AMZN": "AMZN",
-      "TSLA": "TSLA",
-      "GOOGL": "GOOGL",
-      "XAUUSD": "XAUUSD",
-      "XAGUSD": "XAGUSD",
-      "EURUSD": "EURUSD",
-      "BTC-USD": "BTC-USD",
-      "ETH-USD": "ETH-USD",
+      AAPL: 'AAPL',
+      MSFT: 'MSFT',
+      AMZN: 'AMZN',
+      TSLA: 'TSLA',
+      GOOGL: 'GOOGL',
+      XAUUSD: 'XAUUSD',
+      XAGUSD: 'XAGUSD',
+      EURUSD: 'EURUSD',
+      'BTC-USD': 'BTC-USD',
+      'ETH-USD': 'ETH-USD',
     };
     return tickerToAssetMap[ticker];
   }
@@ -218,23 +238,23 @@ export class EodhdWebSocketProvider implements MarketDataProvider {
     // This is a placeholder - in production you'd have a proper asset registry
     // For now, we'll use a simple mapping based on the asset ID
     const symbolMap: Record<string, string> = {
-      "AAPL": "AAPL",
-      "MSFT": "MSFT",
-      "AMZN": "AMZN",
-      "TSLA": "TSLA",
-      "GOOGL": "GOOGL",
-      "XAUUSD": "XAUUSD",
-      "XAGUSD": "XAGUSD",
-      "EURUSD": "EURUSD",
-      "BTC-USD": "BTC-USD",
-      "ETH-USD": "ETH-USD",
+      AAPL: 'AAPL',
+      MSFT: 'MSFT',
+      AMZN: 'AMZN',
+      TSLA: 'TSLA',
+      GOOGL: 'GOOGL',
+      XAUUSD: 'XAUUSD',
+      XAGUSD: 'XAGUSD',
+      EURUSD: 'EURUSD',
+      'BTC-USD': 'BTC-USD',
+      'ETH-USD': 'ETH-USD',
     };
     return symbolMap[assetId];
   }
 
   private determineMarket(symbol: string): string {
-    if (symbol.includes("USD") && !symbol.includes("-")) return "forex";
-    if (symbol.includes("-")) return "crypto";
-    return "us";
+    if (symbol.includes('USD') && !symbol.includes('-')) return 'forex';
+    if (symbol.includes('-')) return 'crypto';
+    return 'us';
   }
 }

@@ -1,4 +1,4 @@
-import type { QuoteItem, QuotesMap, MarketTrend } from "@/types/market";
+import type { QuoteItem, QuotesMap, MarketTrend } from '@/types/market';
 
 export default interface MarketItemState {
   quotes: QuotesMap;

@@ -1,6 +1,7 @@
-export type AssetType = "stock" | "etf" | "crypto" | "metal" | "forex" | "index";
+export type AssetType =
+  'stock' | 'etf' | 'crypto' | 'metal' | 'forex' | 'index';
 
-export type MarketType = "spot" | "future" | "equity";
+export type MarketType = 'spot' | 'future' | 'equity';
 
 export interface Instrument {
   provider: string;

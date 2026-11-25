@@ -1,6 +1,9 @@
-import type { Asset } from "./models";
-import type { MarketDataProvider, ProviderCapabilities } from "./providers/Provider";
-import { providerRegistry } from "./ProviderRegistry";
+import type { Asset } from './models';
+import type {
+  MarketDataProvider,
+  ProviderCapabilities,
+} from './providers/Provider';
+import { providerRegistry } from './ProviderRegistry';
 
 export interface ProviderSelectionCriteria {
   requireRealtime?: boolean;
@@ -14,7 +17,7 @@ export interface ProviderSelectionCriteria {
 export class ProviderSelector {
   selectProvidersForAsset(
     asset: Asset,
-    criteria?: ProviderSelectionCriteria
+    criteria?: ProviderSelectionCriteria,
   ): MarketDataProvider[] {
     const available = providerRegistry.getAvailable();
 
@@ -40,7 +43,7 @@ export class ProviderSelector {
 
   selectBestProvider(
     asset: Asset,
-    criteria?: ProviderSelectionCriteria
+    criteria?: ProviderSelectionCriteria,
   ): MarketDataProvider | undefined {
     const providers = this.selectProvidersForAsset(asset, criteria);
 
@@ -58,7 +61,7 @@ export class ProviderSelector {
   }
 
   selectAllProvidersForCapability(
-    capability: keyof ProviderCapabilities
+    capability: keyof ProviderCapabilities,
   ): MarketDataProvider[] {
     return providerRegistry.getByCapability(capability);
   }

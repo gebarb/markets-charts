@@ -1,6 +1,6 @@
-import type { Asset, Quote } from "./models";
-import type { MarketDataProvider, Subscription } from "./providers/Provider";
-import { providerSelector } from "./ProviderSelector";
+import type { Asset, Quote } from './models';
+import type { MarketDataProvider, Subscription } from './providers/Provider';
+import { providerSelector } from './ProviderSelector';
 
 interface ActiveSubscription {
   assetId: string;
@@ -16,7 +16,7 @@ export class SubscriptionManager {
   subscribe(
     asset: Asset,
     callback: (quote: Quote) => void,
-    providerId?: string
+    providerId?: string,
   ): Subscription {
     const assetId = asset.id;
 
@@ -100,7 +100,8 @@ export class SubscriptionManager {
   }
 
   private getProviderById(providerId: string): MarketDataProvider | undefined {
-    const providers = providerSelector.selectAllProvidersForCapability("quotes");
+    const providers =
+      providerSelector.selectAllProvidersForCapability('quotes');
     return providers.find((p) => p.id === providerId);
   }
 

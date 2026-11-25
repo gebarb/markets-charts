@@ -10,22 +10,28 @@ describe('dataValidation', () => {
     it('should validate EOD Historical Data message', () => {
       const message = JSON.stringify({ s: 'AAPL', p: 150.25 });
       const result = validateMarketMessage(message);
-      
+
       expect(result.isValid).toBe(true);
       expect(result.sanitizedData).toEqual({ ticker: 'AAPL', value: 150.25 });
     });
 
     it('should validate Coinbase message', () => {
-      const message = JSON.stringify({ product_id: 'ETH-USD', price: '2500.50' });
+      const message = JSON.stringify({
+        product_id: 'ETH-USD',
+        price: '2500.50',
+      });
       const result = validateMarketMessage(message);
-      
+
       expect(result.isValid).toBe(true);
-      expect(result.sanitizedData).toEqual({ ticker: 'ETH-USD', value: 2500.50 });
+      expect(result.sanitizedData).toEqual({
+        ticker: 'ETH-USD',
+        value: 2500.5,
+      });
     });
 
     it('should reject invalid JSON', () => {
       const result = validateMarketMessage('invalid json');
-      
+
       expect(result.isValid).toBe(false);
       expect(result.error).toBe('Failed to parse JSON');
     });
@@ -33,7 +39,7 @@ describe('dataValidation', () => {
     it('should reject message with missing ticker', () => {
       const message = JSON.stringify({ p: 150.25 });
       const result = validateMarketMessage(message);
-      
+
       expect(result.isValid).toBe(false);
       expect(result.error).toBe('Invalid or missing ticker');
     });
@@ -41,7 +47,7 @@ describe('dataValidation', () => {
     it('should reject message with missing value', () => {
       const message = JSON.stringify({ s: 'AAPL' });
       const result = validateMarketMessage(message);
-      
+
       expect(result.isValid).toBe(false);
       expect(result.error).toBe('Invalid or missing value');
     });
@@ -49,7 +55,7 @@ describe('dataValidation', () => {
     it('should reject message with NaN value', () => {
       const message = JSON.stringify({ s: 'AAPL', p: 'invalid' });
       const result = validateMarketMessage(message);
-      
+
       expect(result.isValid).toBe(false);
       expect(result.error).toBe('Invalid or missing value');
     });
@@ -57,7 +63,7 @@ describe('dataValidation', () => {
     it('should reject message with value out of reasonable range', () => {
       const message = JSON.stringify({ s: 'AAPL', p: -100 });
       const result = validateMarketMessage(message);
-      
+
       expect(result.isValid).toBe(false);
       expect(result.error).toBe('Value out of reasonable range');
     });
@@ -66,19 +72,19 @@ describe('dataValidation', () => {
   describe('detectAnomaly', () => {
     it('should detect price spike above threshold', () => {
       const result = detectAnomaly(150, 100, 0.4);
-      
+
       expect(result).toBe(true);
     });
 
     it('should not detect normal price change', () => {
       const result = detectAnomaly(105, 100, 0.5);
-      
+
       expect(result).toBe(false);
     });
 
     it('should use default threshold when not provided', () => {
       const result = detectAnomaly(160, 100);
-      
+
       expect(result).toBe(true);
     });
   });
@@ -91,9 +97,9 @@ describe('dataValidation', () => {
         { timestamp: 2, value: 110 },
         { timestamp: 3, value: 115 },
       ];
-      
+
       const result = deduplicateData(data);
-      
+
       expect(result).toHaveLength(3);
       expect(result[1].value).toBe(110); // Most recent value for timestamp 2
     });
@@ -104,9 +110,9 @@ describe('dataValidation', () => {
         { timestamp: 1, value: 100 },
         { timestamp: 2, value: 105 },
       ];
-      
+
       const result = deduplicateData(data);
-      
+
       expect(result[0].timestamp).toBe(1);
       expect(result[1].timestamp).toBe(2);
       expect(result[2].timestamp).toBe(3);
@@ -117,15 +123,15 @@ describe('dataValidation', () => {
         timestamp: i,
         value: i * 10,
       }));
-      
+
       const result = deduplicateData(data, 500);
-      
+
       expect(result).toHaveLength(500);
     });
 
     it('should return empty array for empty input', () => {
       const result = deduplicateData([]);
-      
+
       expect(result).toHaveLength(0);
     });
   });

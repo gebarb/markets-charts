@@ -4,8 +4,8 @@
 // For true real-time data, use WebSocket mode with a paid API key.
 // NOTE: REST API mode is currently disabled due to CORS restrictions from EOD API.
 // TODO: Add backend proxy server or switch to CORS-friendly API provider.
-const REST_API_KEY = import.meta.env.VITE_EOD_REST_KEY || "demo";
-const BASE_URL = "https://eodhd.com/api";
+const REST_API_KEY = import.meta.env.VITE_EOD_REST_KEY || 'demo';
+const BASE_URL = 'https://eodhd.com/api';
 
 export interface RestApiQuote {
   ticker: string;
@@ -23,7 +23,9 @@ export interface EodApiQuote {
   volume: number;
 }
 
-export async function fetchStockQuotes(symbols: string[]): Promise<RestApiQuote[]> {
+export async function fetchStockQuotes(
+  symbols: string[],
+): Promise<RestApiQuote[]> {
   // Use EOD historical endpoint with filter=last_close for stocks
   // Returns latest close price from historical data (works with free API)
   const promises = symbols.map(async (symbol) => {
@@ -34,11 +36,21 @@ export async function fetchStockQuotes(symbols: string[]): Promise<RestApiQuote[
 
     try {
       const response = await fetch(url);
-      console.log('[REST API] Stock response status for', symbol, ':', response.status);
+      console.log(
+        '[REST API] Stock response status for',
+        symbol,
+        ':',
+        response.status,
+      );
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('[REST API] Stock error response for', symbol, ':', errorText);
+        console.error(
+          '[REST API] Stock error response for',
+          symbol,
+          ':',
+          errorText,
+        );
         return null;
       }
 
@@ -51,7 +63,12 @@ export async function fetchStockQuotes(symbols: string[]): Promise<RestApiQuote[
         timestamp: Date.now(),
       };
     } catch (error) {
-      console.error('[REST API] Error fetching stock quote for', symbol, ':', error);
+      console.error(
+        '[REST API] Error fetching stock quote for',
+        symbol,
+        ':',
+        error,
+      );
       return null;
     }
   });
@@ -60,7 +77,9 @@ export async function fetchStockQuotes(symbols: string[]): Promise<RestApiQuote[
   return results.filter((quote): quote is RestApiQuote => quote !== null);
 }
 
-export async function fetchForexQuotes(symbols: string[]): Promise<RestApiQuote[]> {
+export async function fetchForexQuotes(
+  symbols: string[],
+): Promise<RestApiQuote[]> {
   return [];
   // Use EOD historical endpoint with filter=last_close for forex
   // Returns latest close price from historical data (works with free API)
@@ -72,11 +91,21 @@ export async function fetchForexQuotes(symbols: string[]): Promise<RestApiQuote[
 
     try {
       const response = await fetch(url);
-      console.log('[REST API] Forex response status for', symbol, ':', response.status);
+      console.log(
+        '[REST API] Forex response status for',
+        symbol,
+        ':',
+        response.status,
+      );
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('[REST API] Forex error response for', symbol, ':', errorText);
+        console.error(
+          '[REST API] Forex error response for',
+          symbol,
+          ':',
+          errorText,
+        );
         return null;
       }
 
@@ -89,7 +118,12 @@ export async function fetchForexQuotes(symbols: string[]): Promise<RestApiQuote[
         timestamp: Date.now(),
       };
     } catch (error) {
-      console.error('[REST API] Error fetching forex quote for', symbol, ':', error);
+      console.error(
+        '[REST API] Error fetching forex quote for',
+        symbol,
+        ':',
+        error,
+      );
       return null;
     }
   });
@@ -98,7 +132,9 @@ export async function fetchForexQuotes(symbols: string[]): Promise<RestApiQuote[
   return results.filter((quote): quote is RestApiQuote => quote !== null);
 }
 
-export async function fetchCryptoQuotes(symbols: string[]): Promise<RestApiQuote[]> {
+export async function fetchCryptoQuotes(
+  symbols: string[],
+): Promise<RestApiQuote[]> {
   // Use EOD historical endpoint with filter=last_close for crypto
   // Returns latest close price from historical data (works with free API)
   return [];
@@ -110,11 +146,21 @@ export async function fetchCryptoQuotes(symbols: string[]): Promise<RestApiQuote
 
     try {
       const response = await fetch(url);
-      console.log('[REST API] Crypto response status for', symbol, ':', response.status);
+      console.log(
+        '[REST API] Crypto response status for',
+        symbol,
+        ':',
+        response.status,
+      );
 
       if (!response.ok) {
         const errorText = await response.text();
-        console.error('[REST API] Crypto error response for', symbol, ':', errorText);
+        console.error(
+          '[REST API] Crypto error response for',
+          symbol,
+          ':',
+          errorText,
+        );
         return null;
       }
 
@@ -127,7 +173,12 @@ export async function fetchCryptoQuotes(symbols: string[]): Promise<RestApiQuote
         timestamp: Date.now(),
       };
     } catch (error) {
-      console.error('[REST API] Error fetching crypto quote for', symbol, ':', error);
+      console.error(
+        '[REST API] Error fetching crypto quote for',
+        symbol,
+        ':',
+        error,
+      );
       return null;
     }
   });
